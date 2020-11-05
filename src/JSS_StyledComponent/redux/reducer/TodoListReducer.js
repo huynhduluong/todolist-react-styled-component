@@ -1,5 +1,8 @@
+import { arrTheme } from "../../Themes/ThemeManager";
 import { ToDoListDarkTheme } from "../../Themes/ToDoListDarkTheme";
-import { ADD_TASK } from "../constant";
+import { ToDoListLightTheme } from "../../Themes/ToDoListLightTheme";
+import { ToDoListPrimaryTheme } from "../../Themes/ToDoListPrimaryTheme";
+import { ADD_TASK, CHANGE_THEME } from "../constant";
 
 const initialState = {
   themeToDoList: ToDoListDarkTheme,
@@ -32,6 +35,15 @@ const TodoListReducer = (state = initialState, action) => {
         done: false,
       };
       state.taskList = [...state.taskList, newTask];
+      return { ...state };
+    }
+    case CHANGE_THEME: {
+      let theme = arrTheme.find((theme) => {
+        return theme.id == action.payload;
+      });
+      if (theme) {
+        state.themeToDoList = { ...theme.theme };
+      }
       return { ...state };
     }
     default:
