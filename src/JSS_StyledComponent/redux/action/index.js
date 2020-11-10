@@ -1,18 +1,11 @@
+import Axios from "axios";
 import {
-  ADD_TASK,
-  CHANGE_STATUS_TASK,
   CHANGE_THEME,
-  DELETE_TASK,
   EDIT_TASK,
-  UPDATE_TASK,
+  TASK_FAILED,
+  TASK_REQUEST,
+  TASK_SUCCESS,
 } from "../constant";
-
-export const actAddTask = (newTask) => {
-  return {
-    type: ADD_TASK,
-    payload: newTask,
-  };
-};
 
 export const actChangeTheme = (codeTheme) => {
   return {
@@ -21,19 +14,48 @@ export const actChangeTheme = (codeTheme) => {
   };
 };
 
-export const actChangeStatusTask = (task) => {
-  return {
-    type: CHANGE_STATUS_TASK,
-    payload: task,
+export const actGetTaskApi = (uri, method = "GET", data) => {
+  return (dispatch) => {
+    dispatch(actTaskRequest());
+    Axios({
+      url: `https://5f5c7a345e3a4d001624941b.mockapi.io/TaskTodo/${uri}`,
+      method,
+      data,
+    })
+      .then((result) => {
+        if (method !== "GET") {
+          dispatch(actGetTaskApi("", "GET", ""));
+        } else if (method === "GET" && uri !== "") {
+          dispatch(actEditTask(result.data));
+        } else {
+          dispatch(actTaskSuccess(result.data));
+        }
+      })
+      .catch((err) => {
+        dispatch(actTaskFailed(err));
+      });
   };
 };
 
-export const actDeleteTask = (task) => {
+export const actTaskRequest = () => {
   return {
-    type: DELETE_TASK,
-    payload: task,
+    type: TASK_REQUEST,
   };
 };
+
+export const actTaskSuccess = (data) => {
+  return {
+    type: TASK_SUCCESS,
+    payload: data,
+  };
+};
+export const actTaskFailed = (err) => {
+  return {
+    type: TASK_FAILED,
+    payload: err,
+  };
+};
+
 export const actEditTask = (task) => {
   return {
     type: EDIT_TASK,
@@ -41,9 +63,4 @@ export const actEditTask = (task) => {
   };
 };
 
-export const actUpdateTask = (task) => {
-  return {
-    type: UPDATE_TASK,
-    payload: task,
-  };
-};
+
