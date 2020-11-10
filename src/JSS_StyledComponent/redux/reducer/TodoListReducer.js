@@ -13,7 +13,7 @@ const initialState = {
   loading: false,
   taskList: null,
   err: null,
-  editTask: { id: -1, taskName: "", done: false },
+  editTask: { id: -1, taskName: "", status: "" },
 };
 
 const TodoListReducer = (state = initialState, action) => {
